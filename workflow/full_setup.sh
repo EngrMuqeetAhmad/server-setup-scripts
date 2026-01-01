@@ -17,5 +17,5 @@ set -e
 
 ./pgadmin/install_pgadmin4.sh
 
-./deploy/deploy_backend.sh
-./deploy/deploy_frontend.sh
+# ./deploy/deploy_backend.sh
+# ./deploy/deploy_frontend.sh
