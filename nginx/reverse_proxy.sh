@@ -3,9 +3,9 @@ set -e
 
 # Ask user for domain
 read -p "Enter your domain (e.g., example.com): " DOMAIN
-
+read -p "Enter root frontend folder name: " FRONTEND_ROOT
 # Path to your frontend build folder
-FRONTEND_DIST="/var/www/frontend/dist"
+FRONTEND_DIST="/var/www/$FRONTEND_ROOT/dist"
 
 # Create NGINX config
 sudo tee /etc/nginx/sites-available/app <<EOF
