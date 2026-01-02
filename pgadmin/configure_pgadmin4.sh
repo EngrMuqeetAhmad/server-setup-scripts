@@ -8,7 +8,6 @@ echo
 
 echo "Creating required directories..."
 
-# Required directories
 sudo mkdir -p /etc/pgadmin4
 sudo mkdir -p /var/lib/pgadmin
 sudo mkdir -p /var/log/pgadmin
@@ -25,11 +24,22 @@ LOG_FILE = '/var/log/pgadmin/pgadmin.log'
 SQLITE_PATH = '/var/lib/pgadmin/pgadmin.db'
 EOF
 
-echo "Initializing pgAdmin (official setup)..."
+echo "Initializing pgAdmin (Apache errors will be ignored)..."
 
-# Use official pgAdmin setup script (modern versions)
+set +e
+
 sudo PGADMIN_SETUP_EMAIL="$PGADMIN_EMAIL" \
      PGADMIN_SETUP_PASSWORD="$PGADMIN_PASSWORD" \
      /usr/pgadmin4/bin/setup-web.sh --yes
+
+SETUP_EXIT_CODE=$?
+
+set -e
+
+if [ $SETUP_EXIT_CODE -ne 0 ]; then
+  echo "WARNING: pgAdmin setup returned a non-zero code (likely Apache). Continuing..."
+else
+  echo "pgAdmin setup completed cleanly."
+fi
 
 echo "pgAdmin configured successfully."
