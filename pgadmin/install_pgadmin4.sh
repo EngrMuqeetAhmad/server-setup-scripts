@@ -1,9 +1,17 @@
 #!/bin/bash
 set -e
 
-curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add -
-sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list'
+echo "Installing pgAdmin4 (standalone, no Apache)..."
 
+# Add pgAdmin repository
+curl -fsSL https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/pgadmin-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/pgadmin-keyring.gpg] \
+https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" \
+| sudo tee /etc/apt/sources.list.d/pgadmin4.list
+
+# Install pgAdmin in server mode only
 sudo apt update
-sudo apt install -y pgadmin4-web
-sudo /usr/pgadmin4/bin/setup-web.sh
+sudo apt install -y pgadmin4
+
+echo "pgAdmin4 installed (no Apache)."
