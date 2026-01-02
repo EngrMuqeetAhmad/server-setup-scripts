@@ -30,12 +30,20 @@ cd "$DEPLOY_DIR"
 
 REAL_USER_HOME=$(eval echo "~$SUDO_USER")
 ENV_SOURCE="$REAL_USER_HOME/server-setup-scripts/assets/frontend/.env"
+HT_ACCESS_SOURCE="$REAL_USER_HOME/server-setup-scripts/assets/frontend/.htaccess"
 
 if [ -f "$ENV_SOURCE" ]; then
     echo "Copying .env file from $ENV_SOURCE to $DEPLOY_DIR"
     sudo cp "$ENV_SOURCE" "$DEPLOY_DIR/.env"
 else
     echo "Warning: .env file not found at $ENV_SOURCE. Make sure environment variables are set!"
+fi
+
+if [ -f "$HT_ACCESS_SOURCE" ]; then
+    echo "Copying .htaccess file from $HT_ACCESS_SOURCE to $DEPLOY_DIR"
+    sudo cp "$HT_ACCESS_SOURCE" "$DEPLOY_DIR/.htaccess"
+else
+    echo "Warning: .htaccess file not found at $HT_ACCESS_SOURCE."
 fi
 
 # -------------------------------
