@@ -27,10 +27,10 @@ cd "$DEPLOY_DIR"
 # -------------------------------
 # Copy .env file
 # -------------------------------
-ENV_SOURCE="$HOME/server-setup-scripts/assets/frontend/.env"
+ENV_SOURCE="~/server-setup-scripts/assets/frontend/.env"
 if [ -f "$ENV_SOURCE" ]; then
     echo "Copying .env file from $ENV_SOURCE to $DEPLOY_DIR"
-    cp "$ENV_SOURCE" "$DEPLOY_DIR/.env"
+    sudo cp "$ENV_SOURCE" "$DEPLOY_DIR/.env"
 else
     echo "Warning: .env file not found at $ENV_SOURCE. Make sure environment variables are set!"
 fi

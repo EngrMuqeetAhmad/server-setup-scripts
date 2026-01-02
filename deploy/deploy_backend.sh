@@ -27,7 +27,7 @@ cd "$DEPLOY_DIR"
 # -------------------------------
 # Copy .env file
 # -------------------------------
-ENV_SOURCE="$HOME/server-setup-scripts/assets/backend/.env"
+ENV_SOURCE="~/server-setup-scripts/assets/backend/.env"
 if [ -f "$ENV_SOURCE" ]; then
     echo "Copying .env file from $ENV_SOURCE to $DEPLOY_DIR"
     cp "$ENV_SOURCE" "$DEPLOY_DIR/.env"
