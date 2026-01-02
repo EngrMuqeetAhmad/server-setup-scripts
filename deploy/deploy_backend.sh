@@ -21,7 +21,7 @@ cd "$DEPLOY_DIR"
 npm install -f
 npm run build
 
-pm2 start dist/main.js --name backend
+pm2 start dist/main.js --name backend -f
 pm2 save
 
 echo "Backend deployed successfully in $DEPLOY_DIR"
