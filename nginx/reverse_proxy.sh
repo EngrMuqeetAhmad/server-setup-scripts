@@ -20,26 +20,26 @@ fi
 # -------------------------------
 echo "Creating NGINX site configuration..."
 
-sudo tee /etc/nginx/sites-available/app <<'EOF'
+sudo tee /etc/nginx/sites-available/app <<EOF
 server {
     listen 80;
-    server_name '"'"$DOMAIN"'"';
+    server_name $DOMAIN;
 
-    root '"'"$FRONTEND_DIST"'"';
+    root $FRONTEND_DIST;
     index index.html;
 
     # Serve React frontend
     location / {
-        try_files $uri /index.html;
+        try_files \$uri /index.html;
     }
 
     # pgAdmin reverse proxy
     location /pgadmin4/ {
         proxy_pass http://127.0.0.1:5050/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_redirect off;
     }
 
@@ -47,10 +47,10 @@ server {
     location /api {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
     }
 
     # Optional gzip compression
@@ -58,6 +58,7 @@ server {
     gzip_types text/plain application/javascript application/json text/css;
 }
 EOF
+
 
 # -------------------------------
 # Enable site & reload NGINX
