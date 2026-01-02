@@ -47,7 +47,7 @@ echo ">>> [5/6] Installing and configuring pgAdmin4 (standalone, via NGINX)..."
 ./pgadmin/install_pgadmin4.sh
 ./pgadmin/configure_pgadmin4.sh
 ./pgadmin/run_pgadmin4.sh
-./nginx/pgadmin_proxy.sh
+# ./pgadmin/pgadmin_proxy.sh
 
 # -------------------------------
 # Deployment (optional)
