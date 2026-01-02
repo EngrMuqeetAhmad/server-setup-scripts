@@ -27,7 +27,10 @@ cd "$DEPLOY_DIR"
 # -------------------------------
 # Copy .env file
 # -------------------------------
-ENV_SOURCE="~/server-setup-scripts/assets/frontend/.env"
+
+REAL_USER_HOME=$(eval echo "~$SUDO_USER")
+ENV_SOURCE="$REAL_USER_HOME/server-setup-scripts/assets/frontend/.env"
+
 if [ -f "$ENV_SOURCE" ]; then
     echo "Copying .env file from $ENV_SOURCE to $DEPLOY_DIR"
     sudo cp "$ENV_SOURCE" "$DEPLOY_DIR/.env"
