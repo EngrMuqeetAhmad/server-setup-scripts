@@ -3,8 +3,9 @@ set -e
 
 echo "===== SERVER SETUP STARTED ====="
 
-./01_git/clone_repos.sh
-./02_system/update_system.sh
+
+./01_system/update_system.sh
+./02_git/clone_repos.sh
 ./03_node/install_node.sh
 ./04_build/build_frontend.sh
 ./04_build/build_backend.sh
