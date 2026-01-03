@@ -66,30 +66,7 @@ sudo systemctl start pgadmin4
 echo "===== pgAdmin4 Standalone Installed and Running ====="
 echo "pgAdmin4 service is listening on 127.0.0.1:5050"
 
-# -------------------------------
-# Configure NGINX reverse proxy
-# -------------------------------
-echo "===== CONFIGURING NGINX REVERSE PROXY FOR pgAdmin4 ====="
 
-sudo tee /etc/nginx/sites-available/pgadmin <<EOF
-server {
-    listen 80;
-    server_name $DOMAIN;
-
-    location /pgadmin4/ {
-        proxy_pass http://127.0.0.1:5050/;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_redirect off;
-    }
-}
-EOF
-
-sudo ln -sf /etc/nginx/sites-available/pgadmin /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
 
 echo "===== pgAdmin4 Setup Complete ====="
 echo "Access pgAdmin4 at http://$DOMAIN/pgadmin4/"
