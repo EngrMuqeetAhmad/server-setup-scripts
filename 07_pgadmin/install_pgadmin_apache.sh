@@ -17,12 +17,20 @@ echo
 read -p "Enter default database name: " PG_DB
 
 # Download latest pgweb binary
-PGWEB_URL="https://github.com/sosedoff/pgweb/releases/latest/download/pgweb_linux_amd64.tar.gz"
 TMP_DIR=$(mktemp -d)
+PGWEB_URL="https://github.com/sosedoff/pgweb/releases/latest/download/pgweb_linux_amd64.tar.gz"
 
 echo "Downloading pgweb..."
-wget -q $PGWEB_URL -O "$TMP_DIR/pgweb.tar.gz"
-tar -xzf "$TMP_DIR/pgweb.tar.gz" -C "$TMP_DIR"
+wget -O "$TMP_DIR/pgweb.tar.gz" --quiet --show-progress --max-redirect=10 "$PGWEB_URL"
+
+if [ ! -f "$TMP_DIR/pgweb.tar.gz" ]; then
+    echo "Error: pgweb download failed!"
+    exit 1
+fi
+
+echo "Extracting pgweb..."
+tar -xzf "$TMP_DIR/pgweb.tar.gz" -C "$TMP_DIR" || { echo "Extraction failed"; exit 1; }
+
 sudo mv "$TMP_DIR/pgweb" /usr/local/bin/pgweb
 sudo chmod +x /usr/local/bin/pgweb
 rm -rf "$TMP_DIR"
