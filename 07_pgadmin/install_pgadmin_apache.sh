@@ -1,72 +1,58 @@
 #!/bin/bash
 set -e
 
-echo "===== INSTALL & CONFIGURE pgAdmin4 (Standalone) ====="
+echo "===== INSTALLING pgWeb ====="
+
+# Ask user for PostgreSQL credentials
+read -p "Enter PostgreSQL host (default: localhost): " PG_HOST
+PG_HOST=${PG_HOST:-localhost}
+
+read -p "Enter PostgreSQL port (default: 5432): " PG_PORT
+PG_PORT=${PG_PORT:-5432}
+
+read -p "Enter PostgreSQL username: " PG_USER
+read -s -p "Enter PostgreSQL password: " PG_PASS
+echo
+
+read -p "Enter default database name: " PG_DB
+
+# Download latest pgweb binary
+PGWEB_URL="https://github.com/sosedoff/pgweb/releases/latest/download/pgweb_linux_amd64.tar.gz"
+TMP_DIR=$(mktemp -d)
+
+echo "Downloading pgweb..."
+wget -q $PGWEB_URL -O "$TMP_DIR/pgweb.tar.gz"
+tar -xzf "$TMP_DIR/pgweb.tar.gz" -C "$TMP_DIR"
+sudo mv "$TMP_DIR/pgweb" /usr/local/bin/pgweb
+sudo chmod +x /usr/local/bin/pgweb
+rm -rf "$TMP_DIR"
+
+echo "pgWeb installed at /usr/local/bin/pgweb"
 
 # -------------------------------
-# Ask user for NGINX domain or IP
+# Setup systemd service
 # -------------------------------
-read -p "Enter domain or IP for pgAdmin4 (e.g., example.com or 13.53.110.48): " DOMAIN
+SERVICE_FILE="/etc/systemd/system/pgweb.service"
 
-# -------------------------------
-# Add pgAdmin repo
-# -------------------------------
-curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add -
-sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list'
-
-sudo apt update
-
-# -------------------------------
-# Install pgAdmin4 standalone
-# -------------------------------
-sudo apt install -y pgadmin4
-
-# -------------------------------
-# Create directories
-# -------------------------------
-sudo mkdir -p /var/lib/pgadmin /var/log/pgadmin /etc/pgadmin4
-sudo chown -R $USER:$USER /var/lib/pgadmin /var/log/pgadmin
-
-# -------------------------------
-# Create config_local.py
-# -------------------------------
-sudo tee /etc/pgadmin4/config_local.py > /dev/null <<EOF
-SERVER_MODE = True
-DEFAULT_SERVER = '127.0.0.1'
-LOG_FILE = '/var/log/pgadmin/pgadmin.log'
-SQLITE_PATH = '/var/lib/pgadmin/pgadmin.db'
-EOF
-
-# -------------------------------
-# Create systemd service
-# -------------------------------
-sudo tee /etc/systemd/system/pgadmin4.service > /dev/null <<EOF
+sudo tee $SERVICE_FILE > /dev/null <<EOF
 [Unit]
-Description=pgAdmin4 Standalone
+Description=pgWeb PostgreSQL Web Interface
 After=network.target
 
 [Service]
+Type=simple
 User=$USER
-Environment=PGADMIN_SETUP_EMAIL=admin@example.com
-Environment=PGADMIN_SETUP_PASSWORD=admin
-ExecStart=/usr/pgadmin4/bin/pgAdmin4
+Environment=PGWEB_DB_URL="postgres://$PG_USER:$PG_PASS@$PG_HOST:$PG_PORT/$PG_DB?sslmode=disable"
+ExecStart=/usr/local/bin/pgweb --bind=127.0.0.1 --listen=5050 --url \$PGWEB_DB_URL
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-# -------------------------------
-# Enable & start service
-# -------------------------------
+# Reload systemd and start service
 sudo systemctl daemon-reload
-sudo systemctl enable pgadmin4
-sudo systemctl start pgadmin4
+sudo systemctl enable --now pgweb
 
-echo "===== pgAdmin4 Standalone Installed and Running ====="
-echo "pgAdmin4 service is listening on 127.0.0.1:5050"
-
-
-
-echo "===== pgAdmin4 Setup Complete ====="
-echo "Access pgAdmin4 at http://$DOMAIN/pgadmin4/"
+echo "pgWeb service started on port 5050"
+echo "Access it locally: http://127.0.0.1:5050"
