@@ -36,11 +36,23 @@ wget -q --show-progress -O "$TMP_DIR/pgweb.zip" "$PGWEB_URL"
 echo "Extracting pgWeb..."
 unzip -q "$TMP_DIR/pgweb.zip" -d "$TMP_DIR"
 
-sudo mv "$TMP_DIR/pgweb" /usr/local/bin/pgweb
+echo "Finding pgWeb binary..."
+PGWEB_BIN=$(find "$TMP_DIR" -type f -name "pgweb*" | head -n 1)
+
+if [ -z "$PGWEB_BIN" ]; then
+    echo "ERROR: pgWeb binary not found after extraction"
+    ls -lh "$TMP_DIR"
+    exit 1
+fi
+
+echo "Installing pgWeb binary: $PGWEB_BIN"
+sudo mv "$PGWEB_BIN" /usr/local/bin/pgweb
 sudo chmod +x /usr/local/bin/pgweb
+
 rm -rf "$TMP_DIR"
 
 echo "pgWeb installed successfully"
+
 
 # -------------------------------
 # Create system user
