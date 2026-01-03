@@ -91,9 +91,11 @@ EnvironmentFile=/etc/pgweb/pgweb.env
 ExecStart=/usr/local/bin/pgweb \\
   --bind=127.0.0.1 \\
   --listen=5050 \\
-  --url=\$DATABASE_URL
-Restart=always
-RestartSec=5
+ --host $PG_HOST \
+  --user $PG_USER \
+  --db $PG_DB \
+  --port $PG_PORT
+  
 
 [Install]
 WantedBy=multi-user.target
