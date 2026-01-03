@@ -67,14 +67,14 @@ fi
 sudo mkdir -p /etc/pgweb
 sudo chmod 700 /etc/pgweb
 
-DB_URL="postgres://${PG_USER}:${PG_PASS}@${PG_HOST}:${PG_PORT}/${PG_DB}?sslmode=disable"
+# DB_URL="postgres://${PG_USER}:${PG_PASS}@${PG_HOST}:${PG_PORT}/${PG_DB}?sslmode=disable"
 
-sudo tee /etc/pgweb/pgweb.env > /dev/null <<EOF
-DATABASE_URL=$DB_URL
-EOF
+# sudo tee /etc/pgweb/pgweb.env > /dev/null <<EOF
+# DATABASE_URL=$DB_URL
+# EOF
 
-sudo chmod 600 /etc/pgweb/pgweb.env
-sudo chown pgweb:pgweb /etc/pgweb/pgweb.env
+# sudo chmod 600 /etc/pgweb/pgweb.env
+# sudo chown pgweb:pgweb /etc/pgweb/pgweb.env
 
 # -------------------------------
 # Create systemd service
@@ -87,7 +87,6 @@ After=network.target
 [Service]
 User=pgweb
 Group=pgweb
-EnvironmentFile=/etc/pgweb/pgweb.env
 ExecStart=/usr/local/bin/pgweb \\
   --bind=127.0.0.1 \\
   --listen=5050 \\
